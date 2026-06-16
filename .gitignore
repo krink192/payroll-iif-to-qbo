@@ -1,0 +1,28 @@
+# ---- Runtime data (MAY CONTAIN CLIENT DATA - never commit) ----------------
+added_accounts.csv
+imported_chart.csv
+*.iif
+# Keep the fictional sample files that ship with the project:
+!test_files/*.iif
+# Converted output
+*_output.csv
+
+# ---- PyInstaller build artifacts ------------------------------------------
+build/
+dist/
+*.spec
+*.exe
+
+# ---- Python ----------------------------------------------------------------
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+env/
+
+# ---- Editor / OS -----------------------------------------------------------
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
