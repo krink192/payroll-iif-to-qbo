@@ -1,0 +1,49 @@
+name: Build Windows executable
+
+# Builds PayrollConverter.exe on every tagged release so binaries come from
+# this public repository (a prerequisite for SignPath Foundation signing).
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install PyInstaller
+        run: pip install pyinstaller
+
+      - name: Build executable
+        run: pyinstaller --onefile --windowed --name PayrollConverter iif_to_qbo_gui.py
+
+      - name: Generate SHA-256 checksum
+        run: |
+          Get-FileHash dist/PayrollConverter.exe -Algorithm SHA256 |
+            Select-Object -ExpandProperty Hash > dist/PayrollConverter.exe.sha256
+        shell: pwsh
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: PayrollConverter
+          path: |
+            dist/PayrollConverter.exe
+            dist/PayrollConverter.exe.sha256
+
+      - name: Attach to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            dist/PayrollConverter.exe
+            dist/PayrollConverter.exe.sha256
